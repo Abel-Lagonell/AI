@@ -1,0 +1,8 @@
+What is intelligence?
+While the answer could be debated, the definition of intelligence could be: the ability to improvise given the current conditions, adapting any given situation given enough time, and finally using the improvisation and adaptability to overcome the given situation. Such like needing to get over a wall would need the intelligent person to improvise a plan around the given situation, adapt the plan to fit what the person can find around them, and then overcome the later obstacles.
+
+Explain the difference between a strong and weak methods in AI and which one depends on the other.
+Weak methods are more widely applicable but dont take into account real knowledge about the overall problem and situation that they are in. Strong methods need to be given knowledge about the overall situation of the problem but depends on weak methods to actually handle the information give.
+
+Are there any tasks a human can do, but you think a computer could never be programmed to do? Why?
+The only task that computers cannot do currently and probably might not ever be able to do is understand human emotion in more that just a surface level, because the computer would need to understand why the person has that emotion and what would be the best way to move forward with interaction with the person. The computer would not be able to do be programmed to do this befcause the amount of data that would need to get processed would be too much, it would be the equivalent of storing a singular person's human experience.
