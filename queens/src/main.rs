@@ -1,26 +1,17 @@
-use std::{fmt, ops::{Index, IndexMut}};
+use std::fmt;
 
 #[derive(Debug, Clone)]
 pub struct Cell {
     row: u8,
     col: u8,
-    max: usize,
 }
 
 impl Cell{
-    pub fn new(max: usize) -> Cell{
+    pub fn new(row: u8, col: u8) -> Cell{
         Cell{
-            row: 0, //0 is starting value for A
-            col: 0, //0 index instead of 1 index
-            max: max, //The max any of the two values could be
+            row: row, //0 is starting value for A
+            col: col, //0 index instead of 1 index
         }
-    }
-
-    //Modifies the row and column of the cell
-    pub fn modify(&mut self, row: u8, col:u8){
-        if row > self.max as u8 || col > self.max as u8 {return}
-        self.row = row;
-        self.col = col;
     }
 }
 
@@ -33,22 +24,22 @@ impl fmt::Display for Cell{
     }
 }
 
-pub struct Queens {
+pub struct Board {
     placements: Vec<Cell>,//Vector contataining the queen locations
-    _size: usize, //Size of the grid
+    size: u8
 }
 
-impl Queens{
-    pub fn new(size: usize) -> Queens {
-        Queens{
-            placements: vec![Cell::new(size); size],
-            _size: size,
+impl Board{
+    pub fn new(size: u8) -> Board {
+        Board{
+            placements: Vec::new(),
+            size: size
         }
     }
 
     //For quick testing purposes, makes a cell with 4x4 'grid'
-    pub fn test() -> Queens{
-        Queens { placements: vec![Cell::new(4); 4], _size: (4) }
+    pub fn test() -> Board{
+        Board { placements: vec![Cell::new(0, 0); 4], size: (4)}
     }
 
     //Get the vector of queens
@@ -56,24 +47,21 @@ impl Queens{
         &self.placements
     }
 
-    //Get back the number of queens in a similar row, column, or diagonals
-    pub fn count_queens(&self, row: u8, col: u8) -> u8{
-        let mut count: u8 = 0;
-        for queen in &self.placements {
-            let delta_y: f64 = row as f64- queen.row as f64;
-            let delta_x: f64 = col as f64- queen.col as f64;
-            let slope : f64 = delta_y/delta_x;
-            if slope == 1.0     { count += 1; continue;}
-            if slope == -1.0    { count += 1; continue;}
-            if queen.row == row { count += 1; continue;} 
-            if queen.col == col { count += 1; continue;}
-        }
-        count
+    pub fn place_queen(&mut self, row: u8, col: u8) {
+        if row > self.size || col > self.size {return}
+        self.placements.push(Cell::new(row, col));
+        return
     }
+
+    pub fn remove_queen(&mut self) {
+        if self.placements.is_empty() {return;}
+        self.placements.pop();
+    }
+
 }
 
 //Allow for the displaying of all queens on the board by their coordinate
-impl fmt::Display for Queens {
+impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut cords = "".to_owned();
         for queen in &self.placements{
@@ -83,29 +71,44 @@ impl fmt::Display for Queens {
     }
 }
 
-//These I think can be deleted once testing is done
-//These two functions are for easier getting of the queens 
-impl Index<usize> for Queens{
-    type Output = Cell;
+// returns true if a queen can be placed on a given cell
+fn is_safe(board: &Board, cell: &Cell) -> bool {
+    // definately safe if there is nothing on board
+    if board.get_placements().is_empty() {return true}
 
-    fn index(&self, index: usize) -> &Self::Output {
-        &self.placements[index]
+    for queen in &board.placements {
+        if queen.row == cell.row { return false} 
+        if queen.col == cell.col { return false}
+
+        // only do calculations if we need to
+        let delta_y: f64 = cell.row as f64- queen.row as f64;
+        let delta_x: f64 = cell.col as f64- queen.col as f64;
+        let slope : f64 = delta_y/delta_x;
+        if slope.abs() == 1.0     { return false}
     }
+    return true
 }
 
-impl IndexMut<usize> for Queens{
-    fn index_mut(&mut self, index: usize) -> &mut Cell {
-        &mut self.placements[index]
+
+fn solve_nqueens(board: &mut Board, row: u8) {
+    // We are at the last row, so a solution was found
+    if row == board.size {println!("{}", board); return;}
+
+    for col in 0..board.size {
+        if is_safe(board, &Cell::new(row, col)) {
+            board.place_queen(row, col);
+            // call recursively for next row
+            solve_nqueens(board, row + 1);
+            // if the recursive call made it to the end, the solution was printed
+            // if not, we backtrack and try again
+            // even if a solution was found, backtrack all the way to find next one
+            board.remove_queen();
+        }
     }
 }
 
 
 fn main(){
-    let mut q = Queens::test();
-    q[0].modify(0, 1);
-    q[1].modify(1, 3);
-    q[2].modify(2, 0);
-    q[3].modify(3, 2);
-    println!("{}", q.count_queens(0, 1));
-    println!("{}", q);
+    let mut q = Board::new(6);
+    solve_nqueens(&mut q, 0);    
 }

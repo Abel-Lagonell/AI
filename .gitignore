@@ -1,2 +1,4 @@
 .\queens\target\*
 ./queens/target/*
+queens/target/*
+
