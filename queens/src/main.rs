@@ -32,14 +32,9 @@ pub struct Board {
 impl Board{
     pub fn new(size: u8) -> Board {
         Board{
-            placements: Vec::new(),
-            size: size
+            placements: Vec::new(),//Start a vector
+            size: size //Max size of board
         }
-    }
-
-    //For quick testing purposes, makes a cell with 4x4 'grid'
-    pub fn test() -> Board{
-        Board { placements: vec![Cell::new(0, 0); 4], size: (4)}
     }
 
     //Get the vector of queens
@@ -58,6 +53,26 @@ impl Board{
         self.placements.pop();
     }
 
+    pub fn print_board(&self) {
+        let mut board_ = String::new();
+        for i in 0..self.size {
+            for j in 0..self.size {
+                let mut cell_empty = true;
+                for queen in &self.placements {
+                    if queen.row == i && queen.col == j {
+                        board_.push_str("[Q]");
+                        cell_empty = false;
+                        break;
+                    }
+                }
+                if cell_empty {
+                    board_.push_str("[ ]");
+                }
+            }
+            board_.push('\n'); // Add a newline after each row
+        }
+        println!("{}", board_);
+    }
 }
 
 //Allow for the displaying of all queens on the board by their coordinate
@@ -92,7 +107,7 @@ fn is_safe(board: &Board, cell: &Cell) -> bool {
 
 fn solve_nqueens(board: &mut Board, row: u8) {
     // We are at the last row, so a solution was found
-    if row == board.size {println!("{}", board); return;}
+    if row == board.size {board.print_board(); return;}
 
     for col in 0..board.size {
         if is_safe(board, &Cell::new(row, col)) {
@@ -109,6 +124,6 @@ fn solve_nqueens(board: &mut Board, row: u8) {
 
 
 fn main(){
-    let mut q = Board::new(6);
+    let mut q = Board::new(1);
     solve_nqueens(&mut q, 0);    
 }
