@@ -15,8 +15,9 @@ impl Cell{
     }
 }
 
-// Alows the cell to display in coordinate form
+
 impl fmt::Display for Cell{
+    //! Allows for a cell to display in a coordinate form
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let ascii = self.row + 65;
         let letter = ascii as char;
@@ -39,16 +40,19 @@ impl Board{
 
     //Get the vector of queens
     pub fn get_placements(&self) -> &Vec<Cell>{
+        //! return a vector of all placed queens
         &self.placements
     }
 
     pub fn place_queen(&mut self, row: u8, col: u8) {
+        //! Tries to place a new queen
         if row > self.size || col > self.size {return}
         self.placements.push(Cell::new(row, col));
         return
     }
 
     pub fn remove_queen(&mut self) {
+        //! Removes the last queen that was placed on the board
         if self.placements.is_empty() {return;}
         self.placements.pop();
     }
@@ -75,8 +79,8 @@ impl Board{
     }
 }
 
-//Allow for the displaying of all queens on the board by their coordinate
 impl fmt::Display for Board {
+    //! Display all queens on the Board by their coordinates
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut cords = "".to_owned();
         for queen in &self.placements{
@@ -86,8 +90,9 @@ impl fmt::Display for Board {
     }
 }
 
-// returns true if a queen can be placed on a given cell
+
 fn is_safe(board: &Board, cell: &Cell) -> bool {
+    //! Returns boolean of if a queen can safely be placed in the given cell
     // definately safe if there is nothing on board
     if board.get_placements().is_empty() {return true}
 
@@ -106,6 +111,9 @@ fn is_safe(board: &Board, cell: &Cell) -> bool {
 
 
 fn solve_nqueens(board: &mut Board, row: u8) {
+    //! Solve the N Queens Problem based on the size of the Board.
+    //! Finds all solutions using backtracking
+
     // We are at the last row, so a solution was found
     if row == board.size {board.print_board(); return;}
 
@@ -124,6 +132,6 @@ fn solve_nqueens(board: &mut Board, row: u8) {
 
 
 fn main(){
-    let mut q = Board::new(1);
+    let mut q = Board::new(6);
     solve_nqueens(&mut q, 0);    
 }
