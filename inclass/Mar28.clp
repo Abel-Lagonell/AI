@@ -14,11 +14,16 @@
   (path (nodes f c) (cost 3))
 )
 
+(deffunction last-item (?temp)
+  (nth$ (length$ ?temp) ?temp)
+)
+
 ; Defining Paths
 (defrule find-paths
   (path (nodes ?begin $?temp) (cost ?c1))
-  (path (nodes $?temp ?end) (cost ?c2))
-  (test (neq ?begin ?end))
+  (path (nodes ?middle ?end) (cost ?c2))
+  (test (eq (last-item $?temp) ?middle))
+  (test (not (member$ ?end $?temp)))
   =>
   (assert (path (nodes ?begin $?temp ?end) (cost (+ ?c1 ?c2))))
 )
